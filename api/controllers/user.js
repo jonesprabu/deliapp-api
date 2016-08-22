@@ -82,6 +82,7 @@ var authenticate = function(req, res) {
     var passw = req.headers['x-api-password'];
     var secretText = appConfig.secret;
     var tokenExpiresIn = appConfig.tokenExpiresIn;
+
     if(!email || !passw){
         res.status(400).json({ success: false, message: 'Email and Password Required' });
         return;
@@ -107,13 +108,17 @@ var authenticate = function(req, res) {
                 // if user is found and password is right
                 // create a token
                 var token = jwt.sign(user, secretText, {
-                    "expiresInMinutes": tokenExpiresIn // expires in 24 hours
+                    "expiresIn": tokenExpiresIn // expires in 24 hours
                 });
-
-                user.token = token;
-
+                console.log("token ---- ", token);
+                delete user.__v;
+                var data = {
+                    token: token,
+                    user: user
+                }
+                console.log(data);
                 // return the information including token as JSON
-                res.status(200).json(user);
+                res.status(200).json(data);
                 return;
             }
 

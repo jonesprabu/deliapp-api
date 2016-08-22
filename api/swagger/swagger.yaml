@@ -162,22 +162,27 @@ definitions:
     properties:
       token:
         type: string
-      _id:
-        type: string
-      sid:
-        type: string
-      name:
-        type: string
-      email:
-        type: string
-      role:
-        type: string
-      admin:
-        type: string
-      created:
-        type: string
-      update:
-        type: string
+      user:
+        type: object
+        properties:  
+          _id:
+            type: string
+          sid:
+            type: string
+          name:
+            type: string
+          email:
+            type: string
+          role:
+            type: string
+          admin:
+            type: string
+          created:
+            type: string
+          updated:
+            type: string
+          __v:
+            type: string
 
   SuccessResponse:
     required:
