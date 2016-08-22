@@ -1,4 +1,5 @@
 module.exports = {
+    'database': 'mongodb://localhost:27017/deliapp',
     'secret': '#kabaliswag#nerruppuda#nerungudapaapom',
-    'database': 'mongodb://localhost:27017'
+    'tokenExpiresIn': 1440
 };
