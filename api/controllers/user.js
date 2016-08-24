@@ -76,7 +76,7 @@ var usersList = function (req, res) {
  Param 1: a handle to the request object
  Param 2: a handle to the response object
  */
-var authenticate = function(req, res) {
+var login = function(req, res) {
 
     var email = req.body.email;
     var passw = req.body.password;
@@ -126,6 +126,47 @@ var authenticate = function(req, res) {
 
     });
 };
+
+/*
+ Functions in a127 controllers used for operations should take two parameters:
+
+ Param 1: a handle to the request object
+ Param 2: a handle to the response object
+ */
+var register = function (req, res) {
+
+    var userObj = req.body;
+    userObj.admin = false;
+    userObj.sid   =
+
+    /*var initialUser = new User({
+        sid: "deliapp",
+        name: "Deliapp",
+        email: "j1s.deliapp@gmail.com",
+        password: "J1sDeliapp",
+        salt: "",
+        mobile: "9884948041",
+        role: "admin",
+        admin: true
+    });*/
+
+    User.findOne({"email":userObj.email}).exec(function(err, doc){
+        console.log("user doc -- ", doc);
+        if(err) throw err;
+        if(doc) {
+            res.status(400).json({
+                success: false,
+                message: 'User already available. Use different email or Sign In.'
+            });
+        } else {
+            userObj.save(function(err){
+                if(err) throw err;
+                console.log('User saved successfully');
+                res.status(200).json({ success: true, message: 'User created successfully, Please check your email to confirm the user' });
+            })
+        }
+    });
+}
 
 
 

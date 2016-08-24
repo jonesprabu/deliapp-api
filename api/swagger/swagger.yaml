@@ -36,13 +36,13 @@ paths:
           description: Error
           schema:
             $ref: "#/definitions/ErrorResponse"
-  /authenticate:
+  /login:
     # binds a127 app logic to a route
     x-swagger-router-controller: user
     post:
       description: Authenticating the user
       # used as the method name of the controller
-      operationId: authenticate
+      operationId: login
       parameters: 
         - name: body
           in: body
