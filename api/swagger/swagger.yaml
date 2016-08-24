@@ -39,19 +39,15 @@ paths:
   /authenticate:
     # binds a127 app logic to a route
     x-swagger-router-controller: user
-    get:
+    post:
       description: Authenticating the user
       # used as the method name of the controller
       operationId: authenticate
       parameters: 
-        - name: x-api-email
-          in: header
-          required: true
-          type: string
-        - name: x-api-password
-          in: header
-          required: true
-          type: string
+        - name: body
+          in: body
+          schema: 
+            $ref: "#/definitions/AuthParams"
       responses:
         "200":
           description: Success
@@ -176,13 +172,24 @@ definitions:
           role:
             type: string
           admin:
-            type: string
+            type: boolean
           created:
             type: string
           updated:
             type: string
           __v:
-            type: string
+            type: number
+            
+  AuthParams:
+    required:
+      - email
+    properties:
+      email:
+        type:
+          string
+      password:
+        type:
+          string
 
   SuccessResponse:
     required:

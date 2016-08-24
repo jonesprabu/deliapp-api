@@ -78,8 +78,8 @@ var usersList = function (req, res) {
  */
 var authenticate = function(req, res) {
 
-    var email = req.headers['x-api-email'];
-    var passw = req.headers['x-api-password'];
+    var email = req.body.email;
+    var passw = req.body.password;
     var secretText = appConfig.secret;
     var tokenExpiresIn = appConfig.tokenExpiresIn;
 
