@@ -7,7 +7,7 @@ module.exports = mongoose.model('User', new Schema({
     sid: String,
     name: String,
     email: String,
-    password: String,
+    hashed_password: String,
     salt: String,
     mobile: String,
     role: {type: String},

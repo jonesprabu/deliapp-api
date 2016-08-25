@@ -122,7 +122,7 @@ definitions:
       role:
         type: string
       admin:
-        type: string
+        type: boolean
       created:
         type: string
       update:

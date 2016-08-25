@@ -1,11 +1,13 @@
 'use strict';
 
-var SwaggerExpress = require('swagger-express-mw');
-var cors = require('cors');
-var app = require('express')();
-var bodyParser  = require('body-parser');
-var morgan      = require('morgan');
-var mongoose    = require('mongoose');
+var SwaggerExpress = require('swagger-express-mw'),
+    cors        = require('cors'),
+    app         = require('express')(),
+    bodyParser  = require('body-parser'),
+    morgan      = require('morgan'),
+    mongoose    = require('mongoose'),
+    User        = require('./api/models/user'),
+    nev         = require('email-verification')(mongoose);
 
 var appConfig = require('./config/config'); // get our config file
 
@@ -29,6 +31,30 @@ app.use(bodyParser.json());
 
 // use morgan to log requests to the console
 app.use(morgan('dev'));
+
+// Email verification for new users
+nev.configure({
+    verificationURL: appConfig.userVerificationURL+'${URL}',
+    persistentUserModel: User,
+    tempUserCollection: 'Non_Verified_User',
+
+    transportOptions: {
+        service: 'Gmail',
+        auth: {
+            user: appConfig.ADMIN_EMAIL,
+            pass: appConfig.ADMIN_EMAIL_PW_HASH
+        }
+    },
+    verifyMailOptions: {
+        from: 'Do Not Reply '+appConfig.ADMIN_EMAIL,
+        subject: 'Please confirm account',
+        html: 'Click the following link to confirm your account:</p><p>${URL}</p>',
+        text: 'Please confirm your account by clicking the following link: ${URL}'
+    },
+    hashingFunction: function(){
+    }
+}, function(error, options){
+});
 
 SwaggerExpress.create(config, function(err, swaggerExpress) {
   if (err) { throw err; }

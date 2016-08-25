@@ -13,10 +13,11 @@
 
  It is a good idea to list the modules that your application depends on in the package.json in the project root
  */
-var util    = require('util');
-var jwt     = require('jsonwebtoken'); // used to create, sign, and verify tokens
-var User    = require('../models/user');
-var appConfig = require('../../config/config');
+var util        = require('../helpers/util');
+var jwt         = require('jsonwebtoken'); // used to create, sign, and verify tokens
+var User        = require('../models/user');
+var appConfig   = require('../../config/config');
+
 
 
 
@@ -34,7 +35,7 @@ var createInitialUser = function (req, res) {
         sid: "deliapp",
         name: "Deliapp",
         email: "j1s.deliapp@gmail.com",
-        password: "J1sDeliapp",
+        hashed_password: "J1sDeliapp",
         salt: "",
         mobile: "9884948041",
         role: "admin",
@@ -76,20 +77,33 @@ var usersList = function (req, res) {
  Param 1: a handle to the request object
  Param 2: a handle to the response object
  */
+var authenticate = function(req, res) {
+
+}
+
+
+/*
+ Functions in a127 controllers used for operations should take two parameters:
+
+ Param 1: a handle to the request object
+ Param 2: a handle to the response object
+ */
 var login = function(req, res) {
 
-    var email = req.body.email;
-    var passw = req.body.password;
+    var emailToVerify = req.body.email;
+    var passWToVerify = req.body.password;
+
+    // To create a token for every login to authenticate the user.
     var secretText = appConfig.secret;
     var tokenExpiresIn = appConfig.tokenExpiresIn;
 
-    if(!email || !passw){
+    if(!emailToVerify || !passWToVerify){
         res.status(400).json({ success: false, message: 'Email and Password Required' });
         return;
     }
     // find the user
     User.findOne({
-        email: email
+        email: emailToVerify
     }, function(err, user) {
 
         if (err) throw err;
@@ -99,8 +113,11 @@ var login = function(req, res) {
             return;
         } else if (user) {
 
+            // Encrypt the passWToVerify to a hashed password with the salt of the user.
+            var hashedPassWToVerify = user.salt ? util.encrypt(passWToVerify, user.salt) : passWToVerify;
+
             // check if password matches
-            if (user.password != passw) {
+            if (user.hashed_password != hashedPassWToVerify) {
                 res.status(400).json({ success: false, message: 'Authentication failed. Wrong password.' });
                 return;
             } else {
@@ -139,17 +156,6 @@ var register = function (req, res) {
     userObj.admin = false;
     userObj.sid   =
 
-    /*var initialUser = new User({
-        sid: "deliapp",
-        name: "Deliapp",
-        email: "j1s.deliapp@gmail.com",
-        password: "J1sDeliapp",
-        salt: "",
-        mobile: "9884948041",
-        role: "admin",
-        admin: true
-    });*/
-
     User.findOne({"email":userObj.email}).exec(function(err, doc){
         console.log("user doc -- ", doc);
         if(err) throw err;
@@ -185,5 +191,6 @@ var register = function (req, res) {
 module.exports = {
     createInitialUser: createInitialUser,
     usersList: usersList,
+    login: login,
     authenticate: authenticate
 };
